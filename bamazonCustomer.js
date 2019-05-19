@@ -27,16 +27,16 @@ var connection = mysql.createConnection({
 // connect to the mysql server and sql database
 connection.connect(function(err) {
   if (err) throw err;
-  console.log("Welcome to bmazon. Connected to Database! connected as id " + connection.threadId);
+  console.log("Welcome to bamazon. Connected to Database! connected as id " + connection.threadId);
 //run the displayProducts function after the connection is made
-displayProducts();
-askProductId();
+const products = displayProducts();
+askProductId(products);
 
 });
 
 function displayProducts() {
  connection.query("SELECT * FROM products", function(err,res) {
-  for (var i = 0; i < res.lenght; i++) {
+  for (var i = 0; i < res.length; i++) {
     console.log(res[i].item_id + " | " + res[i].product_name + " | " + res[i].department_name + " | " + res[i].price + " | " + res[i].stock_quantity);
   }
   console.log("-----------------------------------------");
@@ -45,19 +45,25 @@ function displayProducts() {
 }
 
 //function wich prompts the user for what action they should take
-function askProductId() {
+function askProductId(products) {
   inquirer
-    .prompt({
+    .prompt([{
       name: "productID",
       type: "input",
       message: "Please type the ID of the product you would like to buy"
-    })
+    },
+    {
+     name: "quantity",
+     type: "input",
+     message: "How many units do you want to purchase?"
+    }]
+    )
     .then(function(answer) {
-      var query = "SELECT * FROM products item_id, product_name, department_name, price, stock_quantity WHERE ?";
-      connection.query(query,{ item_id: answer.item_id }, function(err, res) {
-        for (var i=0; i < res.lenght; i++) {
-          console.log("Item id: " + res[i].item_id + " || Product Name: " + res[i].product_name + " || Department Name: " + res[i].department_name + " || Price: " + res[i].price + " || Stock Quantity: " + res[i].stock_quantity);
-        }
+      console.log(answer);
+      //for loop and if I find a match 
+      var query = "UPDATE products SET stock_quantity = WHERE ? ??";
+      connection.query(query,[{}, {}], function(err,res) {
+        
       })
     });
 
